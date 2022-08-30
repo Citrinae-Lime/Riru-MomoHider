@@ -408,8 +408,6 @@ void onModuleLoaded() {
     magisk_tmp_ = ReadMagiskTmp();
     LOGI("Magisk temp path is %s", magisk_tmp_);
     hide_isolated_ = Exists(kIsolated);
-    magic_handle_app_zygote_ = Exists(kMagicHandleAppZygote);
-    use_nsholder_ = Exists(kSetNs);
     RegisterHooks();
 }
 
@@ -422,6 +420,8 @@ static void forkAndSpecializePre(
         jobjectArray* pkgDataInfoList,
         jobjectArray* whitelistedDataInfoList, jboolean* bindMountAppDataDirs,
         jboolean* bindMountAppStorageDirs) {
+    magic_handle_app_zygote_ = Exists(kMagicHandleAppZygote);
+    use_nsholder_ = Exists(kSetNs);
     InitProcessState(*_uid, *is_child_zygote);
     nice_name_ = niceName;
     if (hide_isolated_) {
@@ -466,6 +466,8 @@ static void specializeAppProcessPre(
         jboolean *startChildZygote, jstring *instructionSet, jstring *appDataDir,
         jboolean *isTopApp, jobjectArray *pkgDataInfoList, jobjectArray *whitelistedDataInfoList,
         jboolean *bindMountAppDataDirs, jboolean *bindMountAppStorageDirs) {
+    magic_handle_app_zygote_ = Exists(kMagicHandleAppZygote);
+    use_nsholder_ = Exists(kSetNs);
     InitProcessState(*uid, *startChildZygote);
     if (hide_isolated_)
         no_new_ns_ = EnsureSeparatedNamespace(mountExternal, *bindMountAppDataDirs, *bindMountAppStorageDirs);
